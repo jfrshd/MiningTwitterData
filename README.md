@@ -4,10 +4,10 @@ Twitter is a popular social network where users can share short SMS-like message
 
 <hr>
 
-<h4><b>`streaming.py`:</b></h4>
+<h4><b>streaming.py:</b></h4>
 We have introduced tweepy as a tool to access Twitter data in a fairly easy way with Python. There are different types of data we can collect, we focus on the “tweet” object. We have collected some data tracking `#MLKDay` hashtag, data is then saved into `tweets.json`.
 
-<h4><b>`main.py`:</b></h4>
+<h4><b>main.py:</b></h4>
 
 First, the overall structure of a tweet is analysed, The tweet is then tokenized using `nltk.tokenze()`, but we found conflicts with URLs, @-mentions, hashtags and symbols so we create our own regex expressions to be used instead.
 Then the tokenization job is started on our collected tweets.
