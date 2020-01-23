@@ -16,4 +16,4 @@ We then extracted interesting terms from a data set of tweets, by using simple t
 
 In this project, we did some text mining on Twitter, using some realistic data taken on Martin Luther King's Day `#MLKDay`. We have downloaded some data using the streaming API, pre-processed the data in JSON format and extracted some interesting terms and hashtags from the tweets. The project has also introduced the concept of term co-occurrence and built a co-occurrence matrix and used it to find some interesting insight.
 
-Data is then visualized using `Vincent` which is a great tool that can easily bridge the gap between Python and a language like Javascript that offers a great tool like D3.js, one of the most important libraries for interactive visualisation.  
+Data is then visualized using `Vincent` which is a great tool that can easily bridge the gap between Python and a language like Javascript that offers a great tool like D3.js, one of the most important libraries for interactive visualisation. And then geodata of the tweets is visualized using `Leaflet` javascript library.   

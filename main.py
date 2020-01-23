@@ -1,5 +1,5 @@
 import json
-# with open('tweets.json', 'r') as f:
+# with open(results_file, 'r') as f:
 #     line = f.readline()  # read only the first tweet/line
 #     tweet = json.loads(line)  # load it as Python dict
 #     print(json.dumps(tweet, indent=4))  # pretty-print
@@ -7,7 +7,7 @@ import operator
 
 import pandas
 
-from settings import filter_value
+from settings import filter_value, results_file
 
 """
 text: the text of the tweet itself
@@ -79,9 +79,9 @@ count_bigrams = Counter()
 com = defaultdict(lambda: defaultdict(int))
 dates_of_tweets = []
 dates_king = []
-dates_fbi = []
+dates_letter = []
 
-with open('tweets.json', 'r') as f:
+with open(results_file, 'r') as f:
     for line in f:
         tweet = json.loads(line)
         # Create a list with all the terms
@@ -102,8 +102,8 @@ with open('tweets.json', 'r') as f:
 
         if 'King' in terms_only:
             dates_king.append(tweet['created_at'])
-        if 'FBI' in terms_only:
-            dates_fbi.append(tweet['created_at'])
+        if 'letter' in terms_only:
+            dates_letter.append(tweet['created_at'])
 
         for i in range(len(terms_only) - 1):
             for j in range(i + 1, len(terms_only)):
@@ -162,19 +162,40 @@ time_chart.axis_titles(x='Time', y='Freq')
 time_chart.to_json('time_chart.json')
 
 per_minute_king = build_per_minute(dates_king)
-per_minute_fbi = build_per_minute(dates_fbi)
+per_minute_letter = build_per_minute(dates_letter)
 # all the data together
-match_data = dict(King=per_minute_king, FBI=per_minute_fbi)
+match_data = dict(King=per_minute_king, Letter=per_minute_letter)
 # we need a DataFrame, to accommodate multiple series
 all = pandas.DataFrame(data=match_data,
                        index=per_minute_king.index)
 # Resampling as above
 all = all.resample('1Min').sum().fillna(0)
 
-print('all')
-print(all)
 # and now the plotting
-time_chart = vincent.Line(all[['King', 'FBI']])
+time_chart = vincent.Line(all[['King', 'Letter']])
 time_chart.axis_titles(x='Time', y='Freq')
 time_chart.legend(title='All')
 time_chart.to_json('time_chart.json')
+
+# Tweets are stored in "fname"
+with open(results_file, 'r') as f:
+    geo_data = {
+        "type": "FeatureCollection",
+        "features": []
+    }
+    for line in f:
+        tweet = json.loads(line)
+        if tweet['coordinates']:
+            geo_json_feature = {
+                "type": "Feature",
+                "geometry": tweet['coordinates'],
+                "properties": {
+                    "text": tweet['text'],
+                    "created_at": tweet['created_at']
+                }
+            }
+            geo_data['features'].append(geo_json_feature)
+
+# Save geo data
+with open('geo_data.json', 'w') as fout:
+    fout.write(json.dumps(geo_data, indent=4))
